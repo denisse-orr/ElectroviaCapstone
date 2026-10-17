@@ -17,4 +17,9 @@
 <script>
 	addEventListener("load", (event) => {if (window.initWebRTCWidget) {window.initWebRTCWidget("https://cognigy-endpoint-na1.nicecxone.com/2db497016d12ab0e419b8e01b5a847b18e1a90c80306a3513dcf223aec79231e")}});
 </script>  
+	<script>
+  window.addEventListener("newInfo", (event) => {
+    console.log("DORA NEW INFO EVENT:", event.detail);
+  });
+</script>
 </body></html>
