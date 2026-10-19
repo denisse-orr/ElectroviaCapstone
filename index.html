@@ -14,27 +14,93 @@
 <section class="section" id="products"><h2>Featured Products</h2><p>Innovative electronics for your everyday life.</p><div class="products"><article class="product"><div class="photo">⌨️</div><div class="info"><h3>Wireless Keyboard</h3><span class="price">$79.99</span></div></article><article class="product"><div class="photo">🖱️</div><div class="info"><h3>Wireless Mouse</h3><span class="price">$49.99</span></div></article><article class="product"><div class="photo">🎧</div><div class="info"><h3>Noise Cancelling Headphones</h3><span class="price">$129.99</span></div></article><article class="product"><div class="photo">🔋</div><div class="info"><h3>Portable Power Bank</h3><span class="price">$39.99</span></div></article><article class="product"><div class="photo">📱</div><div class="info"><h3>Adjustable Phone Stand</h3><span class="price">$24.99</span></div></article><article class="product"><div class="photo">🔌</div><div class="info"><h3>USB-C Hub</h3><span class="price">$59.99</span></div></article></div></section></main>
 <footer class="notice" id="about">ElectroVia is a fictional demo storefront created for a Cognigy AI capstone. No real purchases or payments are available.</footer>
 <script src="https://github.com/Cognigy/click-to-call-widget/releases/latest/download/webRTCWidget.js"></script>
+<!-- Paste into Cognigy: xApp: Show HTML > Content (HTML Body only) -->
+<style>
+  .ev{--bg:#060c20;--panel:#101a37;--line:#47517b;--purple:#aa66ff;--cyan:#40d9ff;--text:#f5f5ff;--muted:#b8c2de;
+    font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);background:var(--bg);min-height:100vh;padding:24px 16px;box-sizing:border-box}
+  .ev *{box-sizing:border-box}
+  .ev .wrap{max-width:520px;margin:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .ev h1{font-size:1.5rem;margin:0 0 6px}
+  .ev p{color:var(--muted);line-height:1.5;margin:0 0 20px}
+  .ev label{display:block;font-weight:600;margin:16px 0 6px}
+  .ev input,.ev select,.ev textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0a1230;color:var(--text);font:inherit}
+  .ev textarea{min-height:110px;resize:vertical}
+  .ev input:focus,.ev select:focus,.ev textarea:focus,.ev button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .ev .err{color:#ff8fa3;font-size:.85rem;margin-top:4px;min-height:1em}
+  .ev button{margin-top:22px;width:100%;padding:14px;border:0;border-radius:12px;font:inherit;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(120deg,#b045f5,#425aff)}
+  .ev button:disabled{opacity:.6;cursor:default}
+  .ev .done{text-align:center;padding:30px 0}
+</style>
 
+<div class="ev">
+  <div class="wrap" id="evWrap">
+    <h1>Report an issue</h1>
+    <p>Complete this form so Dora can pick up where you left off.</p>
+    <form id="evForm" novalidate>
+      <label for="order">Order number</label>
+      <input id="order" name="orderNumber" placeholder="e.g. EV-10482" autocomplete="off">
+      <div class="err" data-for="order"></div>
+
+      <label for="type">What kind of issue is it?</label>
+      <select id="type" name="issueType">
+        <option value="">Choose one</option>
+        <option>Item arrived damaged</option>
+        <option>Item not working</option>
+        <option>Wrong item received</option>
+        <option>Late or missing delivery</option>
+        <option>Billing problem</option>
+        <option>Something else</option>
+      </select>
+      <div class="err" data-for="type"></div>
+
+      <label for="desc">What happened?</label>
+      <textarea id="desc" name="description"></textarea>
+      <div class="err" data-for="desc"></div>
+
+      <label for="email">Email for updates</label>
+      <input id="email" name="email" type="email" autocomplete="email">
+      <div class="err" data-for="email"></div>
+
+      <button type="submit" id="evBtn">Submit issue</button>
+    </form>
+  </div>
+</div>
+
+<script src="/sdk/app-page-sdk.js"></script>
 <script>
-  window.addEventListener("load", () => {
-    if (window.initWebRTCWidget) {
-      window.initWebRTCWidget("https://cognigy-endpoint-na1.nicecxone.com/2db497016d12ab0e419b8e01b5a847b18e1a90c80306a3513dcf223aec79231e")
-        .then((widget) => {
-          console.log("DORA: Widget initialized");
+(function () {
+  var form = document.getElementById('evForm');
+  var btn = document.getElementById('evBtn');
+  function setErr(id, msg) { document.querySelector('[data-for="' + id + '"]').textContent = msg || ''; }
 
-          widget.on("newRTCSession", (session) => {
-            console.log("DORA: New call session", session);
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = {
+      orderNumber: form.orderNumber.value.trim(),
+      issueType: form.issueType.value,
+      description: form.description.value.trim(),
+      email: form.email.value.trim()
+    };
+    var ok = true;
+    setErr('order', v.orderNumber ? '' : 'Enter your order number.'); if (!v.orderNumber) ok = false;
+    setErr('type', v.issueType ? '' : 'Choose an issue type.'); if (!v.issueType) ok = false;
+    setErr('desc', v.description ? '' : 'Tell us what happened.'); if (!v.description) ok = false;
+    var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email);
+    setErr('email', emailOk ? '' : 'Enter a valid email address.'); if (!emailOk) ok = false;
+    if (!ok) return;
 
-            session.on("newInfo", (infoEvent) => {
-              console.log("DORA: New INFO received", infoEvent);
-            });
-          });
-        })
-        .catch((error) => {
-          console.error("DORA: Widget initialization error", error);
-        });
-    }
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    // SDK exists only when hosted by Cognigy; fall back so the form can be previewed locally
+    var send = (typeof SDK !== 'undefined') ? SDK.submit(v) : Promise.resolve(console.log('Preview submit', v));
+    Promise.resolve(send).then(function () {
+      document.getElementById('evWrap').innerHTML =
+        '<div class="done"><h1>Thanks, your issue is submitted</h1><p>Return to your chat with Dora to continue.</p></div>';
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Submit issue';
+      setErr('email', 'Something went wrong. Try submitting again.');
+    });
   });
+})();
 </script>
 
 </body></html>
