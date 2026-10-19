@@ -14,12 +14,27 @@
 <section class="section" id="products"><h2>Featured Products</h2><p>Innovative electronics for your everyday life.</p><div class="products"><article class="product"><div class="photo">⌨️</div><div class="info"><h3>Wireless Keyboard</h3><span class="price">$79.99</span></div></article><article class="product"><div class="photo">🖱️</div><div class="info"><h3>Wireless Mouse</h3><span class="price">$49.99</span></div></article><article class="product"><div class="photo">🎧</div><div class="info"><h3>Noise Cancelling Headphones</h3><span class="price">$129.99</span></div></article><article class="product"><div class="photo">🔋</div><div class="info"><h3>Portable Power Bank</h3><span class="price">$39.99</span></div></article><article class="product"><div class="photo">📱</div><div class="info"><h3>Adjustable Phone Stand</h3><span class="price">$24.99</span></div></article><article class="product"><div class="photo">🔌</div><div class="info"><h3>USB-C Hub</h3><span class="price">$59.99</span></div></article></div></section></main>
 <footer class="notice" id="about">ElectroVia is a fictional demo storefront created for a Cognigy AI capstone. No real purchases or payments are available.</footer>
 <script src="https://github.com/Cognigy/click-to-call-widget/releases/latest/download/webRTCWidget.js"></script>
+
 <script>
-	addEventListener("load", (event) => {if (window.initWebRTCWidget) {window.initWebRTCWidget("https://cognigy-endpoint-na1.nicecxone.com/2db497016d12ab0e419b8e01b5a847b18e1a90c80306a3513dcf223aec79231e")}});
-</script>  
-	<script>
-  window.addEventListener("newInfo", (event) => {
-    console.log("DORA NEW INFO EVENT:", event.detail);
+  window.addEventListener("load", () => {
+    if (window.initWebRTCWidget) {
+      window.initWebRTCWidget("https://cognigy-endpoint-na1.nicecxone.com/2db497016d12ab0e419b8e01b5a847b18e1a90c80306a3513dcf223aec79231e")
+        .then((widget) => {
+          console.log("DORA: Widget initialized");
+
+          widget.on("newRTCSession", (session) => {
+            console.log("DORA: New call session", session);
+
+            session.on("newInfo", (infoEvent) => {
+              console.log("DORA: New INFO received", infoEvent);
+            });
+          });
+        })
+        .catch((error) => {
+          console.error("DORA: Widget initialization error", error);
+        });
+    }
   });
 </script>
+
 </body></html>
