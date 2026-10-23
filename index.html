@@ -134,6 +134,13 @@
               // Leave this in while testing so you can see the real shape.
               console.log("Received from Flow:", payload);
 
+              // Flow sends {"closeXApp": true} after the form is submitted
+              if (payload && (payload.closeXApp === true || payload.closeXApp === "true" ||
+                  (payload.data && payload.data.closeXApp === true))) {
+                closeXApp();
+                return;
+              }
+
               var url = findXAppUrl(payload);
               if (url) openXApp(url);
             });
